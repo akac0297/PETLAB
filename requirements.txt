@@ -1,0 +1,7 @@
+platipy
+SimpleITK
+numpy
+matplotlib
+scikit-learn
+seaborn
+pandas
