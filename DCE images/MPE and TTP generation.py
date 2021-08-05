@@ -8,6 +8,7 @@ import copy
 #change this section once I have new data (function to obtain file names), this is just an example
 
 pat_no="05"
+q = 10
 timept="4"
 
 baseline_image=sitk.ReadImage("/home/alicja/Documents/WES_0" + pat_no + "/IMAGES/WES_005_4_20170717_MR_T1_FL3D_TRA_DYNAVIEWS_FL3D1_T1_FL3D_TRA_DYNAVIEWS_9.nii.gz", sitk.sitkInt16)
