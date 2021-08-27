@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 
 import SimpleITK as sitk
@@ -113,15 +113,12 @@ def registerBreastStructtoCT(image_ct_0,contour_breast_plan,tfm_plan_to_0_rigid,
 def maskPET(image_pt_0,image_pt_0_raw,contour_breast_plan_to_0_dir,patient_no,timepoint,path):
     folder="PET_LAB_PROCESSED/WES_0"+patient_no+"/IMAGES/"
     masked_pet_breast = sitk.Mask(image_pt_0, contour_breast_plan_to_0_dir)
-    #sitk.WriteImage(masked_pet_breast, "masked_pet_breast_WES_0" + patient_no + "_" + timepoint + ".nii.gz")
     sitk.WriteImage(masked_pet_breast, path+folder+"WES_0" + patient_no + "_TIMEPOINT_" + timepoint + "_PET_IPSI_BREAST.nii.gz")
     
     masked_pet_breast=sitk.Resample(masked_pet_breast, image_pt_0_raw)
     return(masked_pet_breast)
 
 def registerMasks(masked_pet_breast,patient_no,path,visualise="T"):
-    #may need to mask PET / CT IMAGES and register those rather than trying to register masks together.
-    #or find another way to convert a mask into an image.
     folder="PET_LAB_PROCESSED/WES_0"+patient_no+"/IMAGES/"
     mask1=sitk.ReadImage(path+folder+"WES_0"+patient_no+"_TIMEPOINT_1_PET_IPSI_BREAST.nii.gz")
     mask1=sitk.Resample(mask1,masked_pet_breast)
@@ -157,7 +154,6 @@ def registerMasks(masked_pet_breast,patient_no,path,visualise="T"):
     return(image_mask1_to_0_rigid, tfm_mask1_to_0_rigid,image_mask1_to_0_dir,tfm_mask1_to_0_dir)
 
 def maskWithTumour(path,patient_no,masked_pet_breast,tfm_mask1_to_0_rigid,tfm_mask1_to_0_dir):
-    #this one also may not work
     folder="PET_LAB_PROCESSED/WES_0"+patient_no+"/IMAGES/"
     tum=sitk.ReadImage(path+folder+"WES_0"+patient_no+"_TIMEPOINT_1_PET_TUMOUR.nii.gz")
     tum_to_0_rigid = transform_propagation(
@@ -175,14 +171,14 @@ def maskWithTumour(path,patient_no,masked_pet_breast,tfm_mask1_to_0_rigid,tfm_ma
     
     tum_dilate=sitk.BinaryDilate(tum_to_0_dir, (20,20,20))
     masked_pet_breast=sitk.Mask(masked_pet_breast,tum_dilate==1)
-    return(masked_pet_breast)
+    return(masked_pet_breast) #may want to save this as well
 
 def getPETseg(masked_pet_breast,image_pt_0_raw,patient_no,timepoint,path):
     folder="PET_LAB_PROCESSED/WES_0"+patient_no+"/IMAGES/"
     mask_arr=sitk.GetArrayFromImage(masked_pet_breast)
     mask_arr=mask_arr.flatten() 
 
-    p = np.percentile(mask_arr[mask_arr>0], 98) #should this be the mask or the whole patient ???
+    p = np.percentile(mask_arr[mask_arr>0], 98) #should this be the mask or the whole patient ?
     tum = sitk.Mask(image_pt_0_raw, masked_pet_breast>p)
     tum = sitk.Cast(tum, sitk.sitkInt64)
     tum_cc = sitk.RelabelComponent(sitk.ConnectedComponent(tum))
