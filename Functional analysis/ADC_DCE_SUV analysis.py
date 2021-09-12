@@ -83,7 +83,7 @@ def PETintensityAnalysis(img,tumour_seg,patient_no,timepoint):
 
 
 def ADCanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path):
-    df=pd.DataFrame(columns=["PATIENT_ID","TIMEPOINT","95% ADC","MEDIAN ADC","MEAN ADC","STD DEV ADC","IQR ADC", "MEDIAN ABS DEV ADC", "5% ADC"])
+    df=pd.DataFrame(columns=["PATIENT_ID","TIMEPOINT","95% ADC","MEDIAN ADC","MEAN ADC","STD DEV ADC","IQR ADC", "MEDIAN ABS DEV ADC", "5% ADC", "IQR/MEDIAN ADC"])
     patient_idx=0
     for patient, timepoints in MRI_timepoints.items():
         patient_idx+=1
@@ -96,12 +96,12 @@ def ADCanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path):
             seg=sitk.ReadImage(seg_filename)
             featuresDict = intensityAnalysis(ADC_img,seg,patient,new_timepoint)
             idx=3*patient_idx+i
-            df.loc[idx]=[int(patient)]+[int(new_timepoint)]+[featuresDict.get("95%")]+[featuresDict.get("MEDIAN")]+[featuresDict.get("MEAN")]+[featuresDict.get("STD DEV")]+[featuresDict.get("IQR")]+[featuresDict.get("MEDIAN ABS DEV")]+[featuresDict.get("5%")]
+            df.loc[idx]=[int(patient)]+[int(new_timepoint)]+[featuresDict.get("95%")]+[featuresDict.get("MEDIAN")]+[featuresDict.get("MEAN")]+[featuresDict.get("STD DEV")]+[featuresDict.get("IQR")]+[featuresDict.get("MEDIAN ABS DEV")]+[featuresDict.get("5%")]+[featuresDict.get("IQR")/featuresDict.get("MEDIAN")]
         print(f"Patient WES_0{patient} ADC analysis complete")
     return(df)
 
 def MPEanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path):
-    df=pd.DataFrame(columns=["PATIENT_ID","TIMEPOINT","95% MPE","MEDIAN MPE","MEAN MPE","STD DEV MPE","IQR MPE","MEDIAN ABS DEV MPE","5% MPE"])
+    df=pd.DataFrame(columns=["PATIENT_ID","TIMEPOINT","95% MPE","MEDIAN MPE","MEAN MPE","STD DEV MPE","IQR MPE","MEDIAN ABS DEV MPE","5% MPE", "IQR/MEDIAN MPE"])
     patient_idx=0
     for patient, timepoints in MRI_timepoints.items():
         patient_idx+=1
@@ -114,12 +114,12 @@ def MPEanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path):
             seg=sitk.ReadImage(seg_filename)
             featuresDict = intensityAnalysis(MPE_img,seg,patient,new_timepoint)
             idx=3*patient_idx+i
-            df.loc[idx]=[int(patient)]+[int(new_timepoint)]+[featuresDict.get("95%")]+[featuresDict.get("MEDIAN")]+[featuresDict.get("MEAN")]+[featuresDict.get("STD DEV")]+[featuresDict.get("IQR")]+[featuresDict.get("MEDIAN ABS DEV")]+[featuresDict.get("5%")]
+            df.loc[idx]=[int(patient)]+[int(new_timepoint)]+[featuresDict.get("95%")]+[featuresDict.get("MEDIAN")]+[featuresDict.get("MEAN")]+[featuresDict.get("STD DEV")]+[featuresDict.get("IQR")]+[featuresDict.get("MEDIAN ABS DEV")]+[featuresDict.get("5%")]+[featuresDict.get("IQR")/featuresDict.get("MEDIAN")]
         print(f"Patient WES_0{patient} MPE analysis complete")
     return(df)
 
 def TTPanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path):
-    df=pd.DataFrame(columns=["PATIENT_ID","TIMEPOINT","95% TTP","MEDIAN TTP","MEAN TTP","STD DEV TTP","IQR TTP","MEDIAN ABS DEV TTP","5% TTP"])
+    df=pd.DataFrame(columns=["PATIENT_ID","TIMEPOINT","95% TTP","MEDIAN TTP","MEAN TTP","STD DEV TTP","IQR TTP","MEDIAN ABS DEV TTP","5% TTP", "IQR/MEDIAN TTP"])
     patient_idx=0
     for patient, timepoints in MRI_timepoints.items():
         patient_idx+=1
@@ -132,7 +132,7 @@ def TTPanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path):
             seg=sitk.ReadImage(seg_filename)
             featuresDict = intensityAnalysis(TTP_img,seg,patient,new_timepoint)
             idx=3*patient_idx+i
-            df.loc[idx]=[int(patient)]+[int(new_timepoint)]+[featuresDict.get("95%")]+[featuresDict.get("MEDIAN")]+[featuresDict.get("MEAN")]+[featuresDict.get("STD DEV")]+[featuresDict.get("IQR")]+[featuresDict.get("MEDIAN ABS DEV")]+[featuresDict.get("5%")]
+            df.loc[idx]=[int(patient)]+[int(new_timepoint)]+[featuresDict.get("95%")]+[featuresDict.get("MEDIAN")]+[featuresDict.get("MEAN")]+[featuresDict.get("STD DEV")]+[featuresDict.get("IQR")]+[featuresDict.get("MEDIAN ABS DEV")]+[featuresDict.get("5%")]+[featuresDict.get("IQR")/featuresDict.get("MEDIAN")]
         print(f"Patient WES_0{patient} TTP analysis complete")
     return(df)
 
@@ -168,11 +168,11 @@ Running SUV functional analysis
 Original running of MRI functional analysis code
 """
 ADC_df=ADCanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
-#MPE_df=MPEanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
-#TTP_df=TTPanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
-ADC_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_ADC_analysis_B800T.csv",index=False)
-#MPE_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_MPE_analysis_new.csv",index=False)
-#TTP_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_TTP_analysis_new.csv",index=False)
+MPE_df=MPEanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
+TTP_df=TTPanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
+ADC_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_ADC_analysis_B800T_new.csv",index=False)
+MPE_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_MPE_analysis_new2.csv",index=False)
+TTP_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_TTP_analysis_new2.csv",index=False)
 
 """
 Reading in MRI functional analysis dataframes separately and merging
@@ -181,7 +181,7 @@ Reading in MRI functional analysis dataframes separately and merging
 #MPE_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_MPE_analysis.csv")
 #TTP_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_TTP_analysis.csv")
 
-#DCE_df=pd.merge(MPE_df,TTP_df,on=["PATIENT_ID","TIMEPOINT"])
-#MRIFunctionalAnalysisDf=pd.merge(ADC_df,DCE_df,on=["PATIENT_ID","TIMEPOINT"])
-#MRIFunctionalAnalysisDf.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_functional_analysis_new.csv",index=False)
+DCE_df=pd.merge(MPE_df,TTP_df,on=["PATIENT_ID","TIMEPOINT"])
+MRIFunctionalAnalysisDf=pd.merge(ADC_df,DCE_df,on=["PATIENT_ID","TIMEPOINT"])
+MRIFunctionalAnalysisDf.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_functional_analysis_new2.csv",index=False)
 # combining dataframes together: https://stackoverflow.com/questions/17978133/python-pandas-merge-only-certain-columns
