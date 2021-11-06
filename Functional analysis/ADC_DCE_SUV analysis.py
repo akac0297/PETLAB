@@ -68,6 +68,7 @@ def PETintensityAnalysis(img,tumour_seg,patient_no,timepoint):
     tumour=tumour[tumour>0]
 
     p_95 = np.percentile(tumour, 95)
+    SUV_min=np.min(tumour)
     SUV_max=np.max(tumour)
     median=np.median(tumour)
     mean=np.average(tumour)
@@ -76,7 +77,7 @@ def PETintensityAnalysis(img,tumour_seg,patient_no,timepoint):
     mad=stats.median_abs_deviation(tumour)
     p_5 = np.percentile(tumour, 5)
         
-    featuresDict={"PATIENT_ID":patient_no, "TIMEPOINT":timepoint, "95%":p_95, "MAX": SUV_max, "MEDIAN":median, "MEAN":mean, "STD DEV": sd,
+    featuresDict={"PATIENT_ID":patient_no, "TIMEPOINT":timepoint, "95%":p_95, "MIN": SUV_min, "MAX": SUV_max, "MEDIAN":median, "MEAN":mean, "STD DEV": sd,
     "IQR":iqr, "MEDIAN ABS DEV":mad, "5%":p_5}
     
     return(featuresDict)
@@ -109,7 +110,7 @@ def MPEanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path):
         for i in range(len(timepoints)):
             old_timepoint=timepoints[i]
             new_timepoint=new_timepoints[i]
-            MPE_img=sitk.ReadImage(path+folder+"WES_0"+patient+"_TIMEPOINT_"+new_timepoint+"_MRI_T1W_DCE_MPE_sub.nii.gz")
+            MPE_img=sitk.ReadImage(path+folder+"WES_0"+patient+"_TIMEPOINT_"+new_timepoint+"_MRI_T1W_DCE_MPE.nii.gz")
             seg_filename=getMRIseg(patient,old_timepoint,MRI_seg_path,"MPE")
             seg=sitk.ReadImage(seg_filename)
             featuresDict = intensityAnalysis(MPE_img,seg,patient,new_timepoint)
@@ -137,7 +138,7 @@ def TTPanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path):
     return(df)
 
 def SUVanalysis(path, PET_patient_list, new_timepoints, PET_seg_path):
-    df=pd.DataFrame(columns=["PATIENT_ID","TIMEPOINT","95% SUV","MAX SUV","MEDIAN SUV","MEAN SUV","STD DEV SUV","IQR SUV","MEDIAN ABS DEV SUV","5% SUV"])
+    df=pd.DataFrame(columns=["PATIENT_ID","TIMEPOINT","95% SUV","MIN SUV","MAX SUV","MEDIAN SUV","MEAN SUV","STD DEV SUV","IQR SUV","MEDIAN ABS DEV SUV","5% SUV"])
     patient_idx=0
     for patient in PET_patient_list:
         patient_idx+=1
@@ -151,37 +152,39 @@ def SUVanalysis(path, PET_patient_list, new_timepoints, PET_seg_path):
                 PET_seg=sitk.ReadImage(PET_seg_filename)
                 new_PET_seg=convertPETseg(PET_seg)
                 featuresDict=PETintensityAnalysis(PET_img,new_PET_seg,patient,timepoint)
-                df.loc[idx]=[int(patient)]+[int(timepoint)]+[featuresDict.get("95%")]+[featuresDict.get("MAX")]+[featuresDict.get("MEDIAN")]+[featuresDict.get("MEAN")]+[featuresDict.get("STD DEV")]+[featuresDict.get("IQR")]+[featuresDict.get("MEDIAN ABS DEV")]+[featuresDict.get("5%")]
+                df.loc[idx]=[int(patient)]+[int(timepoint)]+[featuresDict.get("95%")]+[featuresDict.get("MIN")]+[featuresDict.get("MAX")]+[featuresDict.get("MEDIAN")]+[featuresDict.get("MEAN")]+[featuresDict.get("STD DEV")]+[featuresDict.get("IQR")]+[featuresDict.get("MEDIAN ABS DEV")]+[featuresDict.get("5%")]
             else:
-                df.loc[idx]=[int(patient)]+[int(timepoint)]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]
+                df.loc[idx]=[int(patient)]+[int(timepoint)]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]+[np.NaN]
         print(f"Patient WES_0{patient} SUV analysis complete")
     return(df)
 
 """
 Running SUV functional analysis
 """
-#test_PET_patient_list=["10","12","13"] # these don't currently work - I can't resample them properly
 #SUV_df=SUVanalysis(path, PET_patient_list, new_timepoints, PET_seg_path)
-#SUV_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/PET_functional_analysis_new.csv",index=False)
+#SUV_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/PET_functional_analysis_updated.csv",index=False)
 
 """
 Original running of MRI functional analysis code
 """
-ADC_df=ADCanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
-MPE_df=MPEanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
-TTP_df=TTPanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
-ADC_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_ADC_analysis_B800T_new.csv",index=False)
-MPE_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_MPE_analysis_new2.csv",index=False)
-TTP_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_TTP_analysis_new2.csv",index=False)
+#ADC_df=ADCanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
+#MPE_df=MPEanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
+#TTP_df=TTPanalysis(path, MRI_timepoints, new_timepoints, MRI_seg_path)
+#ADC_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_ADC_analysis_B800T_new.csv",index=False)
+#MPE_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_MPE_analysis_correct_ME.csv",index=False)
+#TTP_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_TTP_analysis_new2.csv",index=False)
 
 """
 Reading in MRI functional analysis dataframes separately and merging
 """
-#ADC_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_ADC_analysis.csv")
-#MPE_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_MPE_analysis.csv")
+ADC_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_ADC_analysis_B800T.csv")
+MPE_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_MPE_analysis_correct_ME.csv")
 #TTP_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_TTP_analysis.csv")
 
-DCE_df=pd.merge(MPE_df,TTP_df,on=["PATIENT_ID","TIMEPOINT"])
+#DCE_df=pd.merge(MPE_df,TTP_df,on=["PATIENT_ID","TIMEPOINT"]) #includes TTP
+DCE_df=MPE_df
 MRIFunctionalAnalysisDf=pd.merge(ADC_df,DCE_df,on=["PATIENT_ID","TIMEPOINT"])
-MRIFunctionalAnalysisDf.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_functional_analysis_new2.csv",index=False)
-# combining dataframes together: https://stackoverflow.com/questions/17978133/python-pandas-merge-only-certain-columns
+MRIFunctionalAnalysisDf.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Functional analysis/MRI_functional_analysis_22-Sep-v1.csv",index=False)
+"""
+combining dataframes together: https://stackoverflow.com/questions/17978133/python-pandas-merge-only-certain-columns
+"""
