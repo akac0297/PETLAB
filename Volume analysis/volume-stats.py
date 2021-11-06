@@ -3,7 +3,7 @@ import pandas as pd
 import scikit_posthocs as sp
 
 """
-Friedman test - volume analysis
+Kruskal-Wallis test - volume analysis
 """
 
 volume_data=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Volume analysis/tumour_volume_analysis_new.csv")
