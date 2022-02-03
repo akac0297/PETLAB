@@ -8,9 +8,7 @@ import glob
 import pandas
 import datetime
 
-path="/home/alicja/"
-
-def obtainDCEimages(pat_no="04",timept="1",path=path):
+def obtainDCEimages(pat_no="04",timept="1",path="/home/alicja/"):
     folder="PET_LAB_PROCESSED/WES_0"+pat_no+"/IMAGES/"
     baseline_image=sitk.ReadImage(path+folder+"WES_0"+pat_no+"_TIMEPOINT_"+timept+"_MRI_T1W_DCE_ACQ_0.nii.gz")
     baseline_image=sitk.Cast(baseline_image,sitk.sitkInt16)
@@ -89,8 +87,8 @@ def generateTTP(sub_images,pat_no,timept,path):
     sitk.WriteImage(TTP_img, path+folder+"WES_0"+pat_no+"_TIMEPOINT_"+timept+"_MRI_T1W_DCE_TTP_sub.nii.gz")
     return(TTP_img)
 
-patient_list=["04","05","06","07","08","09","10","12","13","14","15","16","18","19","21","23"]
-def runDCEgeneration(path="/home/alicja/",patient_list=patient_list):
+
+def runDCEgeneration(path="/home/alicja/",patient_list=["04","05","06","07","08","09","10","12","13","14","15","16","18","19","21","23"]):
     MPE_images_generated=0
     TTP_images_generated=0
     timepoints=["1","2","3"]
@@ -107,5 +105,10 @@ def runDCEgeneration(path="/home/alicja/",patient_list=patient_list):
     
     return(MPE_images_generated,TTP_images_generated)
 
-MPE_images_generated,TTP_images_generated=runDCEgeneration(path=path)
-print("Total number MPE images:",MPE_images_generated,"Total number TTP images:", TTP_images_generated)
+if __name__ == "__main__":
+
+    patient_list=["04","05","06","07","08","09","10","12","13","14","15","16","18","19","21","23"]
+    path="/home/alicja/"
+    
+    MPE_images_generated,TTP_images_generated=runDCEgeneration(path=path)
+    print("Total number MPE images:",MPE_images_generated,"Total number TTP images:", TTP_images_generated)
