@@ -64,7 +64,7 @@ def getXRelevant(X,y,X_df):
 X_relevant_df,X_relevant=getXRelevant(X,PET_vols,X_df)
 
 X_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_and_PET_relevant_df_PET-CT_vols.csv")
-X_relevant_df["PET-CT Tumour volume change"]=PET_vols
+#X_relevant_df["PET-CT Tumour volume change"]=PET_vols
 
 """
 Modelling: Use LR and GNB

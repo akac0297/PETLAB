@@ -49,6 +49,7 @@ def getPETimages(patient_no,timepoint,path):
     return(image_ct_0,image_pt_0_raw,image_pt_0,image_ct_plan,contour_breast_plan)
 
 def registerCTplantoCT(image_ct_0,image_ct_plan):
+    image_ct_plan=sitk.Resample(image_ct_plan,image_ct_0,sitk.Transform(),sitk.sitkNearestNeighbor)
     image_ct_plan_to_0_rigid, tfm_plan_to_0_rigid = linear_registration(
         image_ct_0,
         image_ct_plan,
@@ -59,9 +60,11 @@ def registerCTplantoCT(image_ct_0,image_ct_plan):
         metric= 'mean_squares',
         optimiser= 'gradient_descent_line_search',
         number_of_iterations= 25,
-        reg_method='Rigid')
+        reg_method='rigid')
+    
+    print("initial registration complete")
 
-    image_ct_plan_to_0_dir, tfm_plan_to_0_dir = fast_symmetric_forces_demons_registration(
+    image_ct_plan_to_0_dir, tfm_plan_to_0_dir,_ = fast_symmetric_forces_demons_registration(
         image_ct_0,
         image_ct_plan_to_0_rigid,
         resolution_staging=[4,2],
@@ -70,27 +73,26 @@ def registerCTplantoCT(image_ct_0,image_ct_plan):
 
     return(image_ct_plan_to_0_rigid,tfm_plan_to_0_rigid,image_ct_plan_to_0_dir,tfm_plan_to_0_dir)
 
-def registerBreastStructtoCT(image_ct_0,contour_breast_plan,tfm_plan_to_0_rigid,tfm_plan_to_0_dir,patient_no,timepoint):
+def registerBreastStructtoCT(image_ct_0,contour_breast_plan,tfm_plan_to_0_rigid,tfm_plan_to_0_dir,patient_no,timepoint,output_path):
     contour_breast_plan_to_0_rigid = apply_transform(
-        image_ct_0,
         contour_breast_plan,
-        tfm_plan_to_0_rigid,
-        structure=True
+        image_ct_0,
+        tfm_plan_to_0_rigid
     )
 
     contour_breast_plan_to_0_dir = apply_transform(
         contour_breast_plan_to_0_rigid,
-        tfm_plan_to_0_dir,
-        structure=True
+        image_ct_0,
+        tfm_plan_to_0_dir
     )
 
-    sitk.WriteImage(contour_breast_plan_to_0_dir,"PET_plan_breast_seg_"+patient_no+"_"+timepoint+".nii.gz")
+    sitk.WriteImage(contour_breast_plan_to_0_dir,output_path+"PET_plan_breast_seg_"+patient_no+"_"+timepoint+".nii.gz")
     return(contour_breast_plan_to_0_dir)
 
-def maskPET(image_pt_0,image_pt_0_raw,contour_breast_plan_to_0_dir,patient_no,timepoint,path):
-    folder="WES_0"+patient_no+"/IMAGES/"
+def maskPET(image_pt_0,image_pt_0_raw,contour_breast_plan_to_0_dir,patient_no,timepoint,output_path):
+    contour_breast_plan_to_0_dir=sitk.Resample(contour_breast_plan_to_0_dir,image_pt_0,sitk.Transform(),sitk.sitkNearestNeighbor)
     masked_pet_breast = sitk.Mask(image_pt_0, contour_breast_plan_to_0_dir)
-    sitk.WriteImage(masked_pet_breast, path+folder+"WES_0" + patient_no + "_TIMEPOINT_" + timepoint + "_PET_IPSI_BREAST.nii.gz")
+    sitk.WriteImage(masked_pet_breast, output_path+"WES_0" + patient_no + "_TIMEPOINT_" + timepoint + "_PET_IPSI_BREAST.nii.gz")
     
     masked_pet_breast=sitk.Resample(masked_pet_breast, image_pt_0_raw)
     return(masked_pet_breast)
@@ -111,7 +113,7 @@ def registerMasks(masked_pet_breast,patient_no,path):
         number_of_iterations= 25,
         reg_method='Rigid')
 
-    image_mask1_to_0_dir, tfm_mask1_to_0_dir = fast_symmetric_forces_demons_registration(
+    image_mask1_to_0_dir, tfm_mask1_to_0_dir,_ = fast_symmetric_forces_demons_registration(
         masked_pet_breast,
         image_mask1_to_0_rigid,
         resolution_staging=[4,2],
@@ -120,20 +122,19 @@ def registerMasks(masked_pet_breast,patient_no,path):
 
     return(image_mask1_to_0_rigid, tfm_mask1_to_0_rigid,image_mask1_to_0_dir,tfm_mask1_to_0_dir)
 
-def maskWithTumour(path,patient_no,masked_pet_breast,tfm_mask1_to_0_rigid,tfm_mask1_to_0_dir):
+def maskWithTumour(path,patient_no,timepoint,masked_pet_breast,tfm_mask1_to_0_rigid,tfm_mask1_to_0_dir):
     folder="WES_0"+patient_no+"/IMAGES/"
     tum=sitk.ReadImage(path+folder+"WES_0"+patient_no+"_TIMEPOINT_1_PET_TUMOUR.nii.gz")
     tum_to_0_rigid = apply_transform(
-        masked_pet_breast,
         tum,
-        tfm_mask1_to_0_rigid,
-        structure=True
+        masked_pet_breast,
+        tfm_mask1_to_0_rigid
     )
 
     tum_to_0_dir = apply_transform(
         tum_to_0_rigid,
-        tfm_mask1_to_0_dir,
-        structure=True
+        masked_pet_breast,
+        tfm_mask1_to_0_dir
     )
     
     tum_dilate=sitk.BinaryDilate(tum_to_0_dir, (20,20,20))
@@ -155,16 +156,28 @@ def getPETseg(masked_pet_breast,image_pt_0_raw,patient_no,timepoint,output_path)
     return(masked_pet_breast,tum)
 
 path="/home/alicja/PET_LAB_PROCESSED/"
-output_path="/PET-LAB Code/PET-LAB/PET segmentation/PET_40pc_SUVmax_tumours/"
-patient_list=["04","05","06","07","08","09","10","12"]#,"13","14","15","16","18","19"]
-timepoints=["1","2","3"]
+#output_path="/PET-LAB Code/PET-LAB/PET segmentation/PET_40pc_SUVmax_tumours/"
+#patient_list=["04","05","06","07","08","09","10","12"]#,"13","14","15","16","18","19"]
+#timepoints=["1","2","3"]
 
+output_path="/home/alicja/PET-LAB Code/PET-LAB/PET segmentation/PET Breast Masks/"
+patient_no="16"
+timepoint="3"
+
+image_ct_0,image_pt_0_raw,image_pt_0,image_ct_plan,contour_breast_plan=getPETimages(patient_no,timepoint,path)
+image_ct_plan_to_0_rigid,tfm_plan_to_0_rigid,image_ct_plan_to_0_dir,tfm_plan_to_0_dir=registerCTplantoCT(image_ct_0,image_ct_plan)
+print("CT plan registered to CT")
+contour_breast_plan_to_0_dir=registerBreastStructtoCT(image_ct_0,contour_breast_plan,tfm_plan_to_0_rigid,tfm_plan_to_0_dir,patient_no,timepoint,output_path)
+#masked_pet_breast=maskPET(image_pt_0,image_pt_0_raw,contour_breast_plan_to_0_dir,patient_no,timepoint,output_path)
+
+"""
 for patient_no in patient_list:
     for timepoint in timepoints:
         image_ct_0,image_pt_0_raw,image_pt_0,image_ct_plan,contour_breast_plan=getPETimages(patient_no,timepoint,path)
         image_ct_plan_to_0_rigid,tfm_plan_to_0_rigid,image_ct_plan_to_0_dir,tfm_plan_to_0_dir=registerCTplantoCT(image_ct_0,image_ct_plan)
         print("CT plan registered to CT")
-        contour_breast_plan_to_0_dir=registerBreastStructtoCT(image_ct_0,contour_breast_plan,tfm_plan_to_0_rigid,tfm_plan_to_0_dir,patient_no,timepoint)
+        output_path="/home/alicja/PET-LAB Code/PET-LAB/PET segmentation/PET Breast Masks/"
+        contour_breast_plan_to_0_dir=registerBreastStructtoCT(image_ct_0,contour_breast_plan,tfm_plan_to_0_rigid,tfm_plan_to_0_dir,patient_no,timepoint,output_path)
         print("Breast structure registered to CT")
         masked_pet_breast=maskPET(image_pt_0,image_pt_0_raw,contour_breast_plan_to_0_dir,patient_no,timepoint,path)
         print("PET image masked")
@@ -172,7 +185,8 @@ for patient_no in patient_list:
             image_mask1_to_0_rigid, tfm_mask1_to_0_rigid,image_mask1_to_0_dir,tfm_mask1_to_0_dir=registerMasks(
                 masked_pet_breast,patient_no,path)
             "Masks registered"
-            masked_pet_breast=maskWithTumour(path,patient_no,masked_pet_breast,tfm_mask1_to_0_rigid,tfm_mask1_to_0_dir)
+            masked_pet_breast=maskWithTumour(path,patient_no,timepoint,masked_pet_breast,tfm_mask1_to_0_rigid,tfm_mask1_to_0_dir)
             "PET breast masked with tumour"
         masked_pet_breast,tum=getPETseg(masked_pet_breast,image_pt_0_raw,patient_no,timepoint,output_path)
         print(f"Patient {patient_no} timepoint {timepoint} PET tumour segmentation complete")
+"""

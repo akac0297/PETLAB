@@ -119,17 +119,35 @@ print("relative MRI volume change", relative_MRI_volume_change)
 Determining 'responders' and 'non-responders'
 """
 
-PET_volumes=np.array([0.041935483870967745, -0.4101040118870728, -0.7903525046382189, -0.23210633946830267, -0.5405405405405407, -0.7863720073664825, -0.7274401473296501, -0.659959758551308, -0.558282208588957, -0.5947409126063419, -0.8634435962680237, -0.6400911161731208, -0.6155844155844156])
-DCE_volumes=np.array([-0.9679526136617301, -0.373272496056131, -0.8311915536234014, -0.9326586478639568, -0.9892031708073612, -0.9863581388303398, -0.9628653338910416, -0.8224615377332933, -0.8101386225149402, -0.5749023810786822, -0.8198598760858453, -0.9798479711254512, -0.9834757729418346, 3.5169894164274207, -0.973550563804823, -0.9633848391633426])
+#PET_volumes=np.array([0.041935483870967745, -0.4101040118870728, -0.7903525046382189, -0.23210633946830267, -0.5405405405405407, -0.7863720073664825, -0.7274401473296501, -0.659959758551308, -0.558282208588957, -0.5947409126063419, -0.8634435962680237, -0.6400911161731208, -0.6155844155844156])
+#DCE_volumes=np.array([-0.9679526136617301, -0.373272496056131, -0.8311915536234014, -0.9326586478639568, -0.9892031708073612, -0.9863581388303398, -0.9628653338910416, -0.8224615377332933, -0.8101386225149402, -0.5749023810786822, -0.8198598760858453, -0.9798479711254512, -0.9834757729418346, 3.5169894164274207, -0.973550563804823, -0.9633848391633426])
+
+PET_volumes_tp1=PET_df[PET_df['TIMEPOINT']==1]['TUMOUR VOLUME_CM3']
+PET_volumes_tp3=PET_df[PET_df['TIMEPOINT']==3]['TUMOUR VOLUME_CM3']
+PET_tp1_data=PET_volumes_tp1.values
+PET_tp3_data=PET_volumes_tp3.values
+
+PET_rel_volume_change=(PET_tp1_data-PET_tp3_data)/PET_tp1_data*100
+median_PET=np.median(PET_rel_volume_change)
+PET_volumes=[0 if i < median_PET else 1 for i in PET_rel_volume_change]
+
+MRI_volumes_tp1=MRI_df[MRI_df['TIMEPOINT']==1]['TUMOUR VOLUME_CM3']
+MRI_volumes_tp3=MRI_df[MRI_df['TIMEPOINT']==3]['TUMOUR VOLUME_CM3']
+MRI_tp1_data=MRI_volumes_tp1.values
+MRI_tp3_data=MRI_volumes_tp3.values
+
+MRI_rel_volume_change=(MRI_tp1_data-MRI_tp3_data)/MRI_tp1_data*100
+median_MRI=np.median(MRI_rel_volume_change)
+MRI_volumes=[0 if i < median_MRI else 1 for i in MRI_rel_volume_change]
 
 PET_median=np.median(PET_volumes)
-DCE_median=np.median(DCE_volumes)
+MRI_median=np.median(MRI_volumes)
 
 PET_processed=PET_volumes-PET_median
-DCE_processed=DCE_volumes-DCE_median
+MRI_processed=MRI_volumes-MRI_median
 
 PET_processed = [0 if i < 0 else 1 for i in PET_processed]
-DCE_processed = [0 if i < 0 else 1 for i in DCE_processed]
+MRI_processed = [0 if i < 0 else 1 for i in MRI_processed]
 
 print("PET processed", PET_processed)
-print("DCE MRI processed", DCE_processed)
+print("MRI processed", MRI_processed)

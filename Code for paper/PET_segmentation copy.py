@@ -16,9 +16,9 @@ def getPETimage(patient_no,timepoint,path):
 def getPETseg(image_pt_0,patient_no,timepoint,masked_breast_path):
     if patient_no=="12" and timepoint=="3":
         masked_pet_breast=sitk.ReadImage(masked_breast_path+"masked_pet_breast_WES_0"+patient_no+"_"+str(int(timepoint)-1)+"_old.nii.gz")
+    elif patient_no=="14":
+        masked_pet_breast=sitk.ReadImage(masked_breast_path+"masked_pet_breast_WES_0"+patient_no+"_"+str(int(timepoint)-1)+"_new.nii.gz")
     elif patient_no=="15" and timepoint=="1":
-        masked_pet_breast=sitk.ReadImage(masked_breast_path+"masked_pet_breast_WES_0"+patient_no+"_"+str(int(timepoint)-1)+"_old.nii.gz")
-    elif patient_no=="16" and timepoint=="1":
         masked_pet_breast=sitk.ReadImage(masked_breast_path+"masked_pet_breast_WES_0"+patient_no+"_"+str(int(timepoint)-1)+"_old.nii.gz")
     elif patient_no=="19" and timepoint=="2":
         masked_pet_breast=sitk.ReadImage(masked_breast_path+"masked_pet_breast_WES_0"+patient_no+"_"+str(int(timepoint)-1)+"_old.nii.gz")

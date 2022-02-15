@@ -15,6 +15,8 @@ GNB = GaussianNB()
 
 cross_validator = RepeatedKFold(n_splits=3, n_repeats=1, random_state=42)
 
+## Up to here
+
 PET_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/PET_relevant_df.csv",index_col=0)
 #PET_volumes=[-0.04193548,  0.41010401,  0.7903525,   0.23210634,  0.54054054, 0.786372007366482, 0.72744015,  0.65995976, 0.558282208588957, 0.59474091,  0.8634436,   0.64009112,  0.61558442]
 PET_volumes=np.array([0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1])

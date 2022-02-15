@@ -54,6 +54,7 @@ def getMaskFilepaths(mask_path,patient_no):
 def radiomics_analysis(image_filepath, mask_filepath,img_label,z_norm="True"):
     img = sitk.ReadImage(image_filepath)
     mask = sitk.ReadImage(mask_filepath)
+    mask=sitk.Resample(mask,img,sitk.Transform(),sitk.sitkNearestNeighbor)
     
     #Z-score normalisation for MRI
     if z_norm=="True":
@@ -123,8 +124,8 @@ def radiomics_analysis(image_filepath, mask_filepath,img_label,z_norm="True"):
 
     return(dict1)
 
-#patient_list=("04",)
-patient_list=("04","05","06","07","08","09","10","12","13","14","15","16","18","19","21","23")
+patient_list=("05",)
+#patient_list=("04","05","06","07","08","09","10","12","13","14","15","16","18","19","21","23")
 
 def getImageLabel(img_fp):
     if "MPE" not in img_fp:
@@ -186,4 +187,4 @@ for patient_no in patient_list:
     print(f"Patient {patient_no} radiomics extraction complete")
 
 print(df)
-df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE-MRI_radiomics_features_Feb_02_22.csv")
+df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE-MRI_radiomics_features_Feb_04_22_WES_005.csv")
