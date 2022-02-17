@@ -13,10 +13,10 @@ from sklearn.preprocessing import StandardScaler
 
 # Input data (DCE-MRI)
 #DCE_volumes=[0.38054322,   0.12242212,   0.45979818,   0.13357694,  -0.04038771, 0.62797084,   0.87002433,   0.12339629,   0.87001655,   0.70248771,   0.66075925,   0.71046931,  -0.07199637,   0.69350888,   0.95480148, -14.12608326]
-DCE_volumes=np.array([0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0]) # This is a vector of response classifications of the patients (1 = responder)
+DCE_volumes=np.array([0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0])#, 1, 1, 0]) # This is a vector of response classifications of the patients (1 = responder)
 #DCE_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_relevant_df.csv",index_col=0) # This is a df of reduced radiomics features. This is the original dataframe used
 DCE_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_relevant_df_Feb_14_22.csv",index_col=0)
-number_of_MRI_patients=16
+number_of_MRI_patients=13#16
 #test_splits_MRI=[[0,1,5],[2,3,6],[4,7,8],[9,10,11,12],[13,14,15]] # Manually calculated test splits
 #test_splits=[[0,1,5,2,9],[3,10,11,12,4,6],[13,14,15,7,8]]
 #train_splits=[[i for i in range(number_of_patients) if i not in j] for j in test_splits]
@@ -29,24 +29,24 @@ PET_volumes=np.array([0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1])
 number_of_PET_patients=13
 #test_splits_PET=[[i] for i in range(13)] #[[0,1,2],[3,4,5],[6,7,8],[9,10,11,12]]
 
-# Input data (combined DCE-MRI and PET)
-#relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_and_PET_relevant_df_PET-CT_vols.csv",index_col=0) # original dataframe used
-relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_PET_relevant_df_Feb_14_22.csv",index_col=0)
+# # Input data (combined DCE-MRI and PET)
+# #relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_and_PET_relevant_df_PET-CT_vols.csv",index_col=0) # original dataframe used
+# relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_PET_relevant_df_Feb_14_22.csv",index_col=0)
 volumes=np.array([0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1])
 number_of_patients=13
-#test_splits=[[0,1,2],[3,4,5],[6,7,8],[9,10,11,12]]
+# #test_splits=[[0,1,2],[3,4,5],[6,7,8],[9,10,11,12]]
 
 # Remaining input data (not yet created)
 adc_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_relevant_df_Feb_14_22.csv")
 t2w_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/T2W_relevant_df_Feb_14_22.csv")
-dce_adc_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_relevant_df_Feb_14_22.csv")
-dce_t2w_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_T2W_relevant_df_Feb_14_22.csv")
-dce_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_PET_relevant_df_Feb_14_22.csv")
+# dce_adc_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_relevant_df_Feb_14_22.csv")
+# dce_t2w_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_T2W_relevant_df_Feb_14_22.csv")
+# dce_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_PET_relevant_df_Feb_14_22.csv")
 adc_t2w_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_T2W_relevant_df_Feb_14_22.csv")
-adc_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_PET_relevant_df_Feb_14_22.csv")
-t2w_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/T2W_PET_relevant_df_Feb_14_22.csv")
+# adc_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_PET_relevant_df_Feb_14_22.csv")
+# t2w_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/T2W_PET_relevant_df_Feb_14_22.csv")
 dce_adc_t2w_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_T2W_relevant_df_Feb_14_22.csv")
-dce_adc_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_PET_relevant_df_Feb_14_22.csv")
+# dce_adc_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_PET_relevant_df_Feb_14_22.csv")
 adc_t2w_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_T2W_PET_relevant_df_Feb_14_22.csv")
 dce_adc_t2w_pet_relevant_df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_T2W_PET_relevant_df_Feb_14_22.csv")
 
@@ -158,20 +158,33 @@ def runModelling(volumes,relevant_df,number_of_patients,modality):
     specificity1 = cm1_ABC[1,1]/(cm1_ABC[1,0]+cm1_ABC[1,1])
     print('Specificity ABC: ', specificity1)
 
-runModelling(DCE_volumes,DCE_relevant_df,number_of_MRI_patients,"DCE")
-runModelling(PET_volumes,PET_relevant_df,number_of_PET_patients,"PET")
-runModelling(volumes,relevant_df,number_of_patients,"DCE_and_PET")
-
-# The following have not been generated yet
+print("DCE modelling")
+runModelling(volumes,DCE_relevant_df,number_of_MRI_patients,"DCE")
+print("")
+print("PET modelling")
+runModelling(volumes,PET_relevant_df,number_of_PET_patients,"PET")
+# runModelling(volumes,relevant_df,number_of_patients,"DCE_and_PET")
+print("")
+print("ADC modelling")
 runModelling(volumes,adc_relevant_df,number_of_patients,"ADC")
+print("")
+print("T2w modelling")
 runModelling(volumes,t2w_relevant_df,number_of_patients,"T2W")
-runModelling(volumes,dce_adc_relevant_df,number_of_patients,"DCE_and_ADC")
-runModelling(volumes,dce_t2w_relevant_df,number_of_patients,"DCE_and_T2W")
-runModelling(volumes,dce_pet_relevant_df,number_of_patients,"DCE_and_PET")
+# runModelling(volumes,dce_adc_relevant_df,number_of_patients,"DCE_and_ADC")
+# runModelling(volumes,dce_t2w_relevant_df,number_of_patients,"DCE_and_T2W")
+# runModelling(volumes,dce_pet_relevant_df,number_of_patients,"DCE_and_PET")
+print("")
+print("ADC and T2w modelling")
 runModelling(volumes,adc_t2w_relevant_df,number_of_patients,"ADC_and_T2W")
-runModelling(volumes,adc_pet_relevant_df,number_of_patients,"ADC_and_PET")
-runModelling(volumes,t2w_pet_relevant_df,number_of_patients,"T2W_and_PET")
+# runModelling(volumes,adc_pet_relevant_df,number_of_patients,"ADC_and_PET")
+# runModelling(volumes,t2w_pet_relevant_df,number_of_patients,"T2W_and_PET")
+print("")
+print("DCE, ADC, T2w modelling (all MRI)")
 runModelling(volumes,dce_adc_t2w_relevant_df,number_of_patients,"DCE_and_ADC_and_T2w")
-runModelling(volumes,dce_adc_pet_relevant_df,number_of_patients,"DCE_and_ADC_and_PET")
+# runModelling(volumes,dce_adc_pet_relevant_df,number_of_patients,"DCE_and_ADC_and_PET")
+print("")
+print("ADC, T2w, PET modelling")
 runModelling(volumes,adc_t2w_pet_relevant_df,number_of_patients,"ADC_and_T2W_and_PET")
+print("")
+print("DCE, ADC, T2w, and PET modelling")
 runModelling(volumes,dce_adc_t2w_pet_relevant_df,number_of_patients,"DCE_and_ADC_and_T2W_and_PET")

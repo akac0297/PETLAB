@@ -49,7 +49,7 @@ PET radiomics features
 - HIZE ** Use LargeAreaHighGrayLevelEmphasis
 
 """
-df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Radiomics_features_Feb_14_22.csv")
+df=pd.read_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Radiomics_features_Feb_16_22.csv")
 DCE_df = df.loc[df['modality'] == ('DCE')]
 DCE_df = DCE_df[['Idmn', 'Idn','SumAverage','JointAverage','Minimum','Entropy','ClusterTendency','JointEnergy','DifferenceVariance','SumEntropy','time label','modality','Patient']]
 DCE_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE-MRI_radiomics_features_shortened_Feb_14_22.csv")
@@ -128,32 +128,35 @@ adc,adc_df=obtainX(ADC_df,'ADC')
 t2w,t2w_df=obtainX(T2w_df,'T2w SPAIR')
 pet,pet_df=obtainX(PET_df,'PET')
 
-DCE_ADC_df=pd.concat([dce_df,adc_df],axis=1)
-DCE_ADC=DCE_ADC_df.to_numpy()[0]
-DCE_T2W_df=pd.concat([dce_df,t2w_df],axis=1)
-DCE_T2W=DCE_T2W_df.to_numpy()[0]
-DCE_PET_df=pd.concat([dce_df,pet_df],axis=1)
-DCE_PET=DCE_PET_df.to_numpy()[0]
+# DCE_ADC_df=pd.concat([dce_df,adc_df],axis=1)
+# DCE_ADC=DCE_ADC_df.to_numpy()
+# DCE_T2W_df=pd.concat([dce_df,t2w_df],axis=1)
+# DCE_T2W=DCE_T2W_df.to_numpy()
+# DCE_PET_df=pd.concat([dce_df,pet_df],axis=1)
+# DCE_PET=DCE_PET_df.to_numpy()
 ADC_T2W_df=pd.concat([adc_df,t2w_df],axis=1)
-ADC_T2W=ADC_T2W_df.to_numpy()[0]
-ADC_PET_df=pd.concat([adc_df,pet_df],axis=1)
-ADC_PET=ADC_PET_df.to_numpy()[0]
-T2W_PET_df=pd.concat([t2w_df,pet_df],axis=1)
-T2W_PET=T2W_PET_df.to_numpy()[0]
+ADC_T2W=ADC_T2W_df.to_numpy()
+# ADC_PET_df=pd.concat([adc_df,pet_df],axis=1)
+# ADC_PET=ADC_PET_df.to_numpy()
+# T2W_PET_df=pd.concat([t2w_df,pet_df],axis=1)
+# T2W_PET=T2W_PET_df.to_numpy()
 DCE_ADC_T2W_df=pd.concat([dce_df,adc_df,t2w_df],axis=1)
-DCE_ADC_T2W=DCE_ADC_T2W_df.to_numpy()[0]
-DCE_ADC_PET_df=pd.concat([dce_df,adc_df,pet_df],axis=1)
-DCE_ADC_PET=DCE_ADC_PET_df.to_numpy()[0]
+DCE_ADC_T2W=DCE_ADC_T2W_df.to_numpy()
+# DCE_ADC_PET_df=pd.concat([dce_df,adc_df,pet_df],axis=1)
+# DCE_ADC_PET=DCE_ADC_PET_df.to_numpy()
 ADC_T2W_PET_df=pd.concat([adc_df,t2w_df,pet_df],axis=1)
-ADC_T2W_PET=ADC_T2W_PET_df.to_numpy()[0]
+ADC_T2W_PET=ADC_T2W_PET_df.to_numpy()
 DCE_ADC_T2W_PET_df=pd.concat([dce_df,adc_df,t2w_df,pet_df],axis=1)
-DCE_ADC_T2W_PET=DCE_ADC_T2W_PET_df.to_numpy()[0]
+DCE_ADC_T2W_PET=DCE_ADC_T2W_PET_df.to_numpy()
 
 #print(DCE_PET)
 #print(DCE_PET_df)
 
 def getXRelevant(X,X_df,y):
-    relevant_features = mrmr_classif(X,y,K=10)
+    print("running mrmr")
+    #print(X.reshape(3,-1))
+    relevant_features = mrmr_classif(X.reshape(13,-1),y.reshape(-1,1),K=10)
+    print("complete")
     print(relevant_features)
     X_relevant = X[:,relevant_features]
     X_relevant_df=X_df.iloc[:,relevant_features]
@@ -161,21 +164,21 @@ def getXRelevant(X,X_df,y):
 
 # example!
 y=[0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1]
-y=[0]
+y=np.array([0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1])
 # e.g. output: tumour volume results for PET: y = [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1] (patients 4 to 18)
 
 dce_relevant_df,dce_relevant=getXRelevant(dce,dce_df,y)
 adc_relevant_df,adc_relevant=getXRelevant(adc,adc_df,y)
 t2w_relevant_df,t2w_relevant=getXRelevant(t2w,t2w_df,y)
 pet_relevant_df,pet_relevant=getXRelevant(pet,dce_df,y)
-dce_adc_relevant_df,dce_adc_relevant=getXRelevant(DCE_ADC,DCE_ADC_df,y)
-dce_t2w_relevant_df,dce_t2w_relevant=getXRelevant(DCE_T2W,DCE_T2W_df,y)
-dce_pet_relevant_df,dce_pet_relevant=getXRelevant(DCE_PET,DCE_PET_df,y)
+#dce_adc_relevant_df,dce_adc_relevant=getXRelevant(DCE_ADC,DCE_ADC_df,y)
+#dce_t2w_relevant_df,dce_t2w_relevant=getXRelevant(DCE_T2W,DCE_T2W_df,y)
+#dce_pet_relevant_df,dce_pet_relevant=getXRelevant(DCE_PET,DCE_PET_df,y)
 adc_t2w_relevant_df,adc_t2w_relevant=getXRelevant(ADC_T2W,ADC_T2W_df,y)
-adc_pet_relevant_df,adc_pet_relevant=getXRelevant(ADC_PET,ADC_PET_df,y)
-t2w_pet_relevant_df,t2w_pet_relevant=getXRelevant(T2W_PET,T2W_PET_df,y)
+#adc_pet_relevant_df,adc_pet_relevant=getXRelevant(ADC_PET,ADC_PET_df,y)
+#t2w_pet_relevant_df,t2w_pet_relevant=getXRelevant(T2W_PET,T2W_PET_df,y)
 dce_adc_t2w_relevant_df,dce_adc_t2w_relevant=getXRelevant(DCE_ADC_T2W,DCE_ADC_T2W_df,y)
-dce_adc_pet_relevant_df,dce_adc_pet_relevant=getXRelevant(DCE_ADC_PET,DCE_ADC_PET_df,y)
+#dce_adc_pet_relevant_df,dce_adc_pet_relevant=getXRelevant(DCE_ADC_PET,DCE_ADC_PET_df,y)
 adc_t2w_pet_relevant_df,adc_t2w_pet_relevant=getXRelevant(ADC_T2W_PET,ADC_T2W_PET_df,y)
 dce_adc_t2w_pet_relevant_df,dce_adc_t2w_pet_relevant=getXRelevant(DCE_ADC_T2W_PET,DCE_ADC_T2W_PET_df,y)
 
@@ -183,14 +186,14 @@ dce_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_relevant
 adc_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_relevant_df_Feb_14_22.csv")
 t2w_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/T2W_relevant_df_Feb_14_22.csv")
 pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/PET_relevant_df_Feb_14_22.csv")
-dce_adc_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_relevant_df_Feb_14_22.csv")
-dce_t2w_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_T2W_relevant_df_Feb_14_22.csv")
-dce_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_PET_relevant_df_Feb_14_22.csv")
+#dce_adc_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_relevant_df_Feb_14_22.csv")
+#dce_t2w_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_T2W_relevant_df_Feb_14_22.csv")
+#dce_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_PET_relevant_df_Feb_14_22.csv")
 adc_t2w_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_T2W_relevant_df_Feb_14_22.csv")
-adc_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_PET_relevant_df_Feb_14_22.csv")
-t2w_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/T2W_PET_relevant_df_Feb_14_22.csv")
+#adc_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_PET_relevant_df_Feb_14_22.csv")
+#t2w_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/T2W_PET_relevant_df_Feb_14_22.csv")
 dce_adc_t2w_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_T2W_relevant_df_Feb_14_22.csv")
-dce_adc_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_PET_relevant_df_Feb_14_22.csv")
+#dce_adc_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_PET_relevant_df_Feb_14_22.csv")
 adc_t2w_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/ADC_T2W_PET_relevant_df_Feb_14_22.csv")
 dce_adc_t2w_pet_relevant_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/DCE_ADC_T2W_PET_relevant_df_Feb_14_22.csv")
 
@@ -242,22 +245,22 @@ calculateCorrelation(t2w_relevant_df,"t2w")
 calculateSMCorrelation(t2w_relevant_df,"t2w")
 calculateCorrelation(pet_relevant_df,"pet")
 calculateSMCorrelation(pet_relevant_df,"pet")
-calculateCorrelation(dce_adc_relevant_df,"dce_adc")
-calculateSMCorrelation(dce_adc_relevant_df,"dce_adc")
-calculateCorrelation(dce_t2w_relevant_df,"dce_t2w")
-calculateSMCorrelation(dce_t2w_relevant_df,"dce_t2w")
-calculateCorrelation(dce_pet_relevant_df,"dce_pet")
-calculateSMCorrelation(dce_pet_relevant_df,"dce_pet")
+# calculateCorrelation(dce_adc_relevant_df,"dce_adc")
+# calculateSMCorrelation(dce_adc_relevant_df,"dce_adc")
+# calculateCorrelation(dce_t2w_relevant_df,"dce_t2w")
+# calculateSMCorrelation(dce_t2w_relevant_df,"dce_t2w")
+# calculateCorrelation(dce_pet_relevant_df,"dce_pet")
+# calculateSMCorrelation(dce_pet_relevant_df,"dce_pet")
 calculateCorrelation(adc_t2w_relevant_df,"adc_t2w")
 calculateSMCorrelation(adc_t2w_relevant_df,"adc_t2w")
-calculateCorrelation(adc_pet_relevant_df,"adc_pet")
-calculateSMCorrelation(adc_pet_relevant_df,"adc_pet")
-calculateCorrelation(t2w_pet_relevant_df,"t2w_pet")
-calculateSMCorrelation(t2w_pet_relevant_df,"t2w_pet")
+# calculateCorrelation(adc_pet_relevant_df,"adc_pet")
+# calculateSMCorrelation(adc_pet_relevant_df,"adc_pet")
+# calculateCorrelation(t2w_pet_relevant_df,"t2w_pet")
+# calculateSMCorrelation(t2w_pet_relevant_df,"t2w_pet")
 calculateCorrelation(dce_adc_t2w_relevant_df,"dce_adc_t2w")
 calculateSMCorrelation(dce_adc_t2w_relevant_df,"dce_adc_t2w")
-calculateCorrelation(dce_adc_pet_relevant_df,"dce_adc_pet")
-calculateSMCorrelation(dce_adc_pet_relevant_df,"dce_adc_pet")
+# calculateCorrelation(dce_adc_pet_relevant_df,"dce_adc_pet")
+# calculateSMCorrelation(dce_adc_pet_relevant_df,"dce_adc_pet")
 calculateCorrelation(adc_t2w_pet_relevant_df,"adc_t2w_pet")
 calculateSMCorrelation(adc_t2w_pet_relevant_df,"adc_t2w_pet")
 calculateCorrelation(dce_adc_t2w_pet_relevant_df,"dce_adc_t2w_pet")

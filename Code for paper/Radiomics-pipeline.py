@@ -227,8 +227,8 @@ def getImageLabel(img_fp):
 
 #MRI_patient_list=("04",)
 #MRI_patient_list=("04","05","06","07","08","09","10","12","13","14","15","16","18","19","21","23")
-patient_list=("04",)
-#patient_list=("04","05","06","07","08","09","10","12","13","14","15","16","18")
+#patient_list=("04","05","06")
+patient_list=("04","05","06","07","08","09","10","12","13","14","15","16","18")
 
 df=pd.DataFrame()
 for patient_no in patient_list:
@@ -298,4 +298,4 @@ for patient_no in patient_list:
     print(f"Patient {patient_no} radiomics extraction complete")
 
 print(df)
-df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Radiomics_features_Feb_14_22.csv")
+df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Radiomics_features_Feb_17_22.csv")
