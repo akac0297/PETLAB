@@ -1,0 +1,17 @@
+,DCE,ADC,T1w,T2w,T1w Z,T2w Z
+10Percentile,0.0,0.0,0.0,0.0,0.0,0.0
+Range,0.0,,,,,
+Flatness,0.0,,,,,
+MinorAxisLength,0.0,,,,,
+Minimum,0.0,,,,,
+MajorAxisLength,,0.0,0.0,0.0,,
+Maximum,,0.0,0.0,0.0,,
+Maximum2DDiameterColumn,,0.0,0.0,0.0,,
+Maximum2DDiameterRow,,0.0,0.0,0.0,,
+InterquartileRange,,,,,0.0,
+Kurtosis,,,,,0.0,0.0
+Variance,,,,,0.0,
+TotalEnergy,,,,,0.0,
+Sphericity,,,,,,0.0
+LeastAxisLength,,,,,,0.0
+Skewness,,,,,,0.0

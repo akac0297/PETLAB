@@ -175,18 +175,30 @@ ADC_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contrala
 T1w_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T1w_CV_full.csv")
 T2w_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_CV_full.csv")
 T1w_Z_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T1w_Z_CV_full.csv")
+<<<<<<< HEAD
 T2w_Z_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_Z_CV_full.csv")
 T1w_Z_effect_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T1w_Z_effect_CV_full.csv")
 T2w_Z_effect_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_Z_effect_CV_full.csv")
+=======
+# T2w_Z_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_Z_CV_full.csv")
+T1w_Z_effect_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T1w_Z_effect_CV_full.csv")
+# T2w_Z_effect_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_Z_effect_CV_full.csv")
+>>>>>>> a6f0e5bc56eb66c70b50ebc81df9bc2547b0c541
 
 DCE_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_DCE_CV_top_5_features.csv")
 ADC_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_ADC_CV_top_5_features.csv")
 T1w_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T1w_CV_top_5_features.csv")
 T2w_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_CV_top_5_features.csv")
 T1w_Z_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T1w_Z_CV_top_5_features.csv")
+<<<<<<< HEAD
 T2w_Z_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_Z_CV_top_5_features.csv")
 T1w_Z_effect_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T1w_Z_effect_CV_top_5_features.csv")
 T2w_Z_effect_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_Z_effect_CV_top_5_features.csv")
+=======
+# T2w_Z_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_Z_CV_top_5_features.csv")
+T1w_Z_effect_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T1w_Z_effect_CV_top_5_features.csv")
+# T2w_Z_effect_CV.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_T2w_Z_effect_CV_top_5_features.csv")
+>>>>>>> a6f0e5bc56eb66c70b50ebc81df9bc2547b0c541
 
 # print("DCE:",DCE_top_5)
 # print("ADC:",ADC_top_5)
@@ -221,6 +233,7 @@ T2w_Z_effect_icc=pd.Series(T2w_Z_effect_icc_dict)
 icc_df = pd.concat([dce_icc,adc_icc,T1w_icc,T2w_icc,T1w_Z_icc,T2w_Z_icc,T1w_Z_effect_icc,T1w_Z_effect_icc], axis=1)
 icc_df = icc_df.rename(columns={0: 'DCE',1:'ADC',2:'T1w',3:'T2w',4:'T1w Z',5:'T2w Z',6:"T1w Z effect",7:"T2w Z effect"})
 print(icc_df)
+<<<<<<< HEAD
 icc_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_icc_df.csv")
 
 dce_icc_repr=pd.Series(filterICC(dce_icc_dict,0.90))
@@ -246,3 +259,6 @@ icc_repr_df = pd.concat([dce_icc_repr,adc_icc_repr,T1w_icc_repr,T2w_icc_repr,T1w
 icc_repr_df = icc_repr_df.rename(columns={0:"DCE",1:"ADC",2:"T1w",3:"T2w",4:"T1w Z-norm",5:"T2W Z-norm"})
 print(icc_repr_df)
 icc_repr_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_icc_df_75.csv")
+=======
+icc_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Bef_PST_contralateral_icc_df.csv")
+>>>>>>> a6f0e5bc56eb66c70b50ebc81df9bc2547b0c541
