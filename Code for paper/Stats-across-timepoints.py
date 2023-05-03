@@ -38,6 +38,19 @@ def getCV(dataframes):
     CV_summarised=CV[features]
     return CV, CV_summarised, top_5
 
+# calculate the wCV  (within-CV from the QIBA paper)
+def getwCV(dataframes):
+    # 1. calculate the variance and mean for each of N subjects from their replicate measurements
+    table = pd.concat(dataframes).pivot_table(index='Patient',aggfunc=[np.mean, np.var])
+    # 2. calculate the wCV^2 for each of the N subjects by dividing their variance by their squared mean
+    CV = table["var"].div((table["mean"])^2)*100 #take the absolute value of the means
+    # 3. Take the mean of the wCV^2 over the N subjects
+    CV_mean = CV.mean(axis=0)
+    # 4. Take the square root of the value in step 3 to get an estimate of the wCV
+    wCV = CV_mean^(0.5) # this is the within-subject coefficient of variation
+    pcRC = wCV*2.77 # %RC = 2.77 x wCV
+    return wCV, pcRC
+
 # extract columns with the same name (they should be in the same order) and calculate relative differences
 def get_relative_diff(df1, df2):
     feat_baseline=df1
@@ -165,12 +178,41 @@ for binCount in binCounts:
         T1w_Z_Dur=pd.concat([T1w_Z_Dur, T1w_Z_Dur_df], axis=0, ignore_index=True)
         T1w_Z_Post=pd.concat([T1w_Z_Post, T1w_Z_Post_df], axis=0, ignore_index=True)
 
+    DCE_wCV_12, DCE_RC_12 = getwCV([DCE_Bef,DCE_Dur])
+    DCE_wCV_13, DCE_RC_13 = getwCV([DCE_Bef,DCE_Post])
+
+    ADC_wCV_12, ADC_RC_12 = getwCV([ADC_Bef,ADC_Dur])
+    ADC_wCV_13, ADC_RC_13 = getwCV([ADC_Bef,ADC_Post])
+
+    T1w_wCV_12, T1w_RC_12 = getwCV([T1w_Bef,T1w_Dur])
+    T1w_wCV_13, T1w_RC_13 = getwCV([T1w_Bef,T1w_Post])
+
+    T2w_wCV_12, T2w_RC_12 = getwCV([T2w_Bef,T2w_Dur])
+    T2w_wCV_13, T2w_RC_13 = getwCV([T2w_Bef,T2w_Post])
+
+    T1w_Z_wCV_12, T1w_Z_RC_12 = getwCV([T1w_Z_Bef,T1w_Z_Dur])
+    T1w_Z_wCV_13, T1w_Z_RC_13 = getwCV([T1w_Z_Bef,T1w_Z_Post])
+
+    T2w_Z_wCV_12, T2w_Z_RC_12 = getwCV([T2w_Z_Bef,T2w_Z_Dur])
+    T2w_Z_wCV_13, T2w_Z_RC_13 = getwCV([T2w_Z_Bef,T2w_Z_Post])
+
     DCE_CV_full, DCE_CV, DCE_top_5 = getCV([DCE_Bef,DCE_Dur,DCE_Post])
     ADC_CV_full, ADC_CV, ADC_top_5 = getCV([ADC_Bef,ADC_Dur,ADC_Post])
     T1w_CV_full, T1w_CV, T1w_top_5 = getCV([T1w_Bef,T1w_Dur,T1w_Post])
     T2w_CV_full, T2w_CV, T2w_top_5 = getCV([T2w_Bef,T2w_Dur,T2w_Post])
     T1w_Z_CV_full, T1w_Z_CV, T1w_Z_top_5 = getCV([T1w_Z_Bef,T1w_Z_Dur,T1w_Z_Post])
     T2w_Z_CV_full, T2w_Z_CV, T2w_Z_top_5 = getCV([T2w_Z_Bef,T2w_Z_Dur,T2w_Z_Post])
+
+    # # The following code can be used to obtain the %RC from the wCV (which is also calculated below) - any delta radiomics feature needs to be larger than this for
+    # # there to be a significant change
+    # print(DCE_CV_full)
+    # DCE_CV_squared = DCE_CV_full**2
+    # DCE_CV_mean = DCE_CV_squared.mean(axis = 0)
+    # DCE_wCV = DCE_CV_mean**(0.5)
+    # print(DCE_wCV)
+    # RC=2.77*DCE_wCV
+    # print(RC)
+    # RC.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/RC_for_wCV_dataframe_BinCount{}_contralateral_DCE.csv".format(binCount))
 
     DCE_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/BinCount{}_contralateral_DCE_CV_full.csv".format(binCount))
     ADC_CV_full.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/BinCount{}_contralateral_ADC_CV_full.csv".format(binCount))
@@ -310,3 +352,23 @@ for binCount in binCounts:
     icc_df = icc_df.rename(columns={0: 'DCE',1:'ADC',2:'T1w',3:'T2w',4:'T1w Z',5:'T2w Z'})
     print(icc_df)
     icc_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/BinCount{}_contralateral_icc_df.csv".format(binCount))
+
+    dce_icc_repr=pd.Series(filterICC(dce_icc_dict,0.75))
+    adc_icc_repr=pd.Series(filterICC(adc_icc_dict,0.75))
+    T1w_icc_repr=pd.Series(filterICC(T1w_icc_dict,0.75))
+    T2w_icc_repr=pd.Series(filterICC(T2w_icc_dict,0.75))
+
+    icc_repr_df = pd.concat([dce_icc_repr,adc_icc_repr,T1w_icc_repr,T2w_icc_repr],axis=1)
+    icc_repr_df = icc_repr_df.rename(columns={0:"DCE",1:"ADC",2:"T1w",3:"T2w"})
+    print(icc_repr_df)
+    icc_repr_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/BinCount{}_contralateral_icc_df_75.csv".format(binCount))
+
+    dce_icc_repr=pd.Series(filterICC(dce_icc_dict,0.90))
+    adc_icc_repr=pd.Series(filterICC(adc_icc_dict,0.90))
+    T1w_icc_repr=pd.Series(filterICC(T1w_icc_dict,0.90))
+    T2w_icc_repr=pd.Series(filterICC(T2w_icc_dict,0.90))
+
+    icc_repr_df = pd.concat([dce_icc_repr,adc_icc_repr,T1w_icc_repr,T2w_icc_repr],axis=1)
+    icc_repr_df = icc_repr_df.rename(columns={0:"DCE",1:"ADC",2:"T1w",3:"T2w"})
+    print(icc_repr_df)
+    icc_repr_df.to_csv("/home/alicja/PET-LAB Code/PET-LAB/Radiomics/BinCount{}_contralateral_icc_df_90.csv".format(binCount))

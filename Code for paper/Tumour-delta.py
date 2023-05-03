@@ -45,10 +45,10 @@ def getDataframes(patient_id,binCount):
     delta_df_13["modality"]=modalities
     delta_df_13["Z-score normalisation"]=normalisation
 
-    delta_df_23=delta_df_23.reset_index(drop=True)
-    delta_df_23["Patient"]=patients
-    delta_df_23["modality"]=modalities
-    delta_df_23["Z-score normalisation"]=normalisation
+    # delta_df_23=delta_df_23.reset_index(drop=True)
+    # delta_df_23["Patient"]=patients
+    # delta_df_23["modality"]=modalities
+    # delta_df_23["Z-score normalisation"]=normalisation
 
     # print(delta_df_12)
     # print(delta_df_13)
@@ -63,13 +63,13 @@ def getDataframes(patient_id,binCount):
 for binCount in binCounts:
     df_12 = pd.DataFrame()
     df_13 = pd.DataFrame()
-    df_23 = pd.DataFrame()
+    # df_23 = pd.DataFrame()
     for patient_id in MRI_patient_list:
         delta_df_12,delta_df_13,delta_df_23 = getDataframes(patient_id,binCount)
         df_12=pd.concat([df_12,delta_df_12], axis=0, ignore_index=True)
         df_13=pd.concat([df_13,delta_df_13], axis=0, ignore_index=True)
-        df_23=pd.concat([df_23,delta_df_23], axis=0, ignore_index=True)
+        # df_23=pd.concat([df_23,delta_df_23], axis=0, ignore_index=True)
     df_12.to_csv(f"/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Delta_radiomics_tumour_binCount{binCount}_12.csv")
     df_13.to_csv(f"/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Delta_radiomics_tumour_binCount{binCount}_13.csv")
-    df_23.to_csv(f"/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Delta_radiomics_tumour_binCount{binCount}_23.csv")
+    # df_23.to_csv(f"/home/alicja/PET-LAB Code/PET-LAB/Radiomics/Delta_radiomics_tumour_binCount{binCount}_23.csv")
     print(f"Bin count {binCount} delta radiomics calculation complete")
