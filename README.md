@@ -1,5 +1,5 @@
 # PET-LAB
-This repository contains scripts from the PET-LAB project - an outline of the files is provided below:
+This repository contains code for radiomics reproducibility analysis of the data from the TROG 12.02 PET-LABRADOR trial. An outline of the files is provided below:
 
 ## CV-scatter
 Generating stripplots (a type of scatter plot) for the coefficient of variation (CV) for radiomics features of different MRI sequences. The CV is a measure of dispersion of the data.
