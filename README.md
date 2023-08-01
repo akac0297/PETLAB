@@ -28,7 +28,7 @@ Code to erode the breast masks used for whole-breast radiomics (to remove suspec
 Code to prepare dicom files for conversion to nifti by convert_and_process_data script. Code incomplete.
 ## test_df
 Test file for concatenating dataframes in pandas.
-# testing
+## testing
 Testing resampling code for different MRI sequences.
-# wes_014_tumour_code
+## wes_014_tumour_code
 Code to mask out second tumour for WES_014 patient tumour contour data.
